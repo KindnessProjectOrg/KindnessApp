@@ -1,0 +1,44 @@
+{
+  "name": "expo-and-typescript",
+  "version": "0.0.0",
+  "description": "React Native using Expo and TypeScript",
+  "author": {
+    "email": "jan@aagaard.net",
+    "name": "Jan Aagaard"
+  },
+  "private": false,
+  "license": "MIT",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "ios": "exp ios",
+    "lint": "tslint src/**/*.ts",
+    "start": "exp start",
+    "start-joe": "exp start",
+    "validate-typescript": "npm run lint && tsc --noEmit"
+  },
+  "dependencies": {
+    "expo": "25.0.0",
+    "moment": "^2.22.1",
+    "native-base": "^2.4.2",
+    "react": "16.2.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-25.0.0.tar.gz",
+    "react-native-calendars": "^1.18.2",
+    "react-navigation": "1.2.1",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.2.0",
+    "tslib": "1.9.0"
+  },
+  "devDependencies": {
+    "@types/fbemitter": "2.0.32",
+    "@types/react": "16.0.40",
+    "@types/react-native": "0.52.15",
+    "@types/react-navigation": "1.2.1",
+    "exp": "49.2.2",
+    "react-native-typescript-transformer": "1.2.3",
+    "tslint": "5.9.1",
+    "tslint-eslint-rules": "5.1.0",
+    "tslint-react": "3.5.1",
+    "typescript": "2.7.2"
+  }
+}
