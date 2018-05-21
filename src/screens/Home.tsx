@@ -74,11 +74,6 @@ class HomeScreen extends React.Component<HomeScreenProps, HomeScreenState> {
           <Button style={{ padding: 13, height: 80 }} primary>
             <Text style={{ textAlign: "center" }}>{"MY\nKINDNESS\nDIARY"}</Text></Button>
         </View>
-        <Image source={{ uri: "https://s3.amazonaws.com/nikeinc/assets/48622/2015-Nike-Mag-02_original.jpg?1445446034" }} style={{ flex: 1, height: 75, width: 100 }} />
-        <Button style={{ padding: 13, height: 60, ...Margin.mb3, alignSelf: "center" }} onPress={() => this.props.navigation.push("AddEditEntry", { diaryId: "JImmy Jones" })} primary>
-          <Icon name={"compass"} type={"FontAwesome"} />
-
-        </Button>
       </View>
     );
   }
