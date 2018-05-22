@@ -5,7 +5,7 @@ import { CalendarList } from "react-native-calendars";
 import { Button, Text, Icon, Item, Input, Spinner, View, H2, CheckBox, Content, ListItem, Body, Container, Textarea, } from 'native-base';
 import { NavigationScreenProps, NavigationScreenConfigProps } from 'react-navigation';
 import { Colors, Margin } from '../Theme';
-import { StoreDiary, GetDiary } from '../lib/LocalStore';
+import { StoreDiary, GetDiary, AddOrUpdateDiary } from '../lib/LocalStore';
 import AScreenComponent from './AScreenComponent';
 
 interface AddEditEntryRouteProps {
@@ -100,7 +100,7 @@ class AddEditEntry extends AScreenComponent<AddEditEntryProps, AddEditEntryState
 
           {!diary.isGoalOfTheDay ? (
             <Item regular>
-              <Input placeholder={"Other"} value={diary.title} />
+              <Input placeholder={"Other"} onChangeText={t => this.modifyDiary(d => d.title = t)} value={diary.title} />
             </Item>
           ) : null}
 
@@ -116,7 +116,7 @@ class AddEditEntry extends AScreenComponent<AddEditEntryProps, AddEditEntryState
                 Alert.alert("Submit to Kindess Page?", "\nSubmitting to the kindness page makes this entry public. Although there's no guarentee it'll make it to the page, it could. \n\nAre you sure?",
                   [{ text: "Confirm", style: "default" }, { text: "Cancel", style: "cancel" }], { cancelable: false });
               }}><Text>{"Submit to Kindess Page"}</Text></Button>
-            <Button style={{ ...Margin.mr2 }}><Text>{"My Diary"}</Text></Button>
+            <Button style={{ ...Margin.mr2 }} onPress={this.AddUpdateToMyDiary}><Text>{"My Diary"}</Text></Button>
           </View>
 
 
@@ -126,6 +126,15 @@ class AddEditEntry extends AScreenComponent<AddEditEntryProps, AddEditEntryState
     }
 
     return <H2>{"An error occured"}</H2>;
+  }
+
+  AddUpdateToMyDiary = async () => {
+    this.setState({ isLoading: true });
+
+    if(this.state.diary) {
+      await AddOrUpdateDiary(this.state.diary);
+    }
+    this.props.navigation.goBack();
   }
 
 
@@ -145,7 +154,7 @@ class AddEditEntry extends AScreenComponent<AddEditEntryProps, AddEditEntryState
 
   protected initState(): AddEditEntryState {
     return {
-      isLoading: true
+      isLoading: true,
     }
   }
 
@@ -158,6 +167,7 @@ class AddEditEntry extends AScreenComponent<AddEditEntryProps, AddEditEntryState
 
         if (diary) {
           this.setState({ diary, currentUser: user, isLoading: false });
+          this.setState({ diary, isLoading: false });
           return;
         }
       }
@@ -167,7 +177,7 @@ class AddEditEntry extends AScreenComponent<AddEditEntryProps, AddEditEntryState
     }
 
     const d = this.createDiary();
-    await StoreDiary(d);
+    await AddOrUpdateDiary(d);
 
     this.props.navigation.setParams({ title: this.getTitle(d) });
     this.setState({ diary: d, isLoading: false });

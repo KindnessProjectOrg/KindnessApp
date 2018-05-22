@@ -54,7 +54,7 @@ class HomeScreen extends React.Component<HomeScreenProps, HomeScreenState> {
         <View style={{ height: 100, flexDirection: "row", justifyContent: "space-around", margin: Margin["2"] }}>
           <Button style={{ padding: 13, height: 80 }} primary onPress={() => this.props.navigation.push("KindnessPage")}>
             <Text style={{ textAlign: "center" }}>{"THE\nKINDNESS\nPAGE"}</Text></Button>
-          <Button style={{ padding: 13, height: 80 }} primary>
+          <Button style={{ padding: 13, height: 80 }} primary onPress={() => this.props.navigation.push("MyDiary")}>
             <Text style={{ textAlign: "center" }}>{"MY\nKINDNESS\nDIARY"}</Text></Button>
         </View>
       </View>

@@ -40,6 +40,10 @@ export async function GetUser() {
   return null;
 }
 
+export function AddOrUpdateDiary(d: IDiary) {
+  return StoreDiary(d);
+}
+
 export async function GetDiary(id: string) {
   if(id) {
     const key = diaryKey(id);
