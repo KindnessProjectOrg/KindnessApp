@@ -34,3 +34,38 @@ interface RNCalendar {
    */
   dateString: string;
 }
+
+
+interface IFirebaseUser {
+  apiKey:          string;
+    appName:         string;
+    authDomain:      string;
+    createdAt:       string;
+    displayName:     null;
+    email:           null;
+    emailVerified:   boolean;
+    isAnonymous:     boolean;
+    lastLoginAt:     string;
+    phoneNumber:     string;
+    photoURL:        null;
+    providerData:    FireBaseProviderDatum[];
+    redirectEventId: null;
+    stsTokenManager: FireBaseStsTokenManager;
+    uid:             string;
+}
+
+interface FireBaseProviderDatum {
+  displayName: null;
+  email:       null;
+  phoneNumber: string;
+  photoURL:    null;
+  providerId:  string;
+  uid:         string;
+}
+
+interface FireBaseStsTokenManager {
+  accessToken:    string;
+  apiKey:         string;
+  expirationTime: number;
+  refreshToken:   string;
+}

@@ -2,3 +2,4 @@
 /.expo/
 
 *.log
+src/AppConfig.ts
