@@ -3,6 +3,8 @@ import { Component } from 'react'
 import { Margin, Colors } from "../Theme";
 import { Button, Text, Icon, Form, Item, Input, Spinner, View, H2 } from 'native-base';
 import { NavigationScreenProps, NavigationStackScreenOptions } from 'react-navigation'
+import { SendCode, VerifyCode } from '../lib/Api';
+
 interface LoginProps extends NavigationScreenProps {
 
 }
@@ -11,6 +13,7 @@ interface LoginState {
   mode: Mode;
   phoneNumber?: string;
   code?: string;
+  expectedCode?: string;
 }
 
 type Mode = "Welcome" | "RequestingCode" | "EnterCode" | "ValidatingCode" | "Invalid Code";
@@ -43,7 +46,8 @@ export class Login extends Component<LoginProps, LoginState> {
       case "ValidatingCode":
         return (
           <View style={{ flex: 1, flexDirection: "column", justifyContent: "center" }}>
-            <H2 style={{alignSelf:"center"}}>{"Validing code . . ."}</H2>
+            <H2 style={{ alignSelf: "center" }}>{"Validing code . . ."}</H2>
+            <H2 ref={"TESTER12"}></H2>
             <Spinner color={Colors.Primary} />
           </View>
         )
@@ -60,20 +64,39 @@ export class Login extends Component<LoginProps, LoginState> {
     this.setState({ code });
   }
 
-  private tryLogIn() {
-    this.setState({ mode: "RequestingCode" }, () => {
-      setTimeout(() => {
-        this.setState({ mode: "EnterCode" })
-      }, 2000);
+  private async trySendCode() {
+
+    this.setState({ mode: "RequestingCode" }, async () => {
+      if (this.state.phoneNumber) {
+        const code = await SendCode(this.state.phoneNumber);
+
+        if (code) {
+          this.setState({ mode: "EnterCode", expectedCode: code });
+        }
+        else {
+          alert("An error occured, please request another code");
+          this.setState({ mode: "Welcome" });
+        }
+      }
     });
   }
 
   private tryValidateCode() {
-    this.setState({ mode: "ValidatingCode" }, () => {
-      setTimeout(() => {
-        this.props.navigation.push("Home");
-      }, 3000);
+
+    this.setState({ mode: "ValidatingCode" }, async () => {
+      if (this.state.phoneNumber && this.state.code) {
+        const user = await VerifyCode(this.state.phoneNumber, this.state.code);
+
+        if (user) {
+          this.props.navigation.push("Home");
+        }
+        else {
+          alert("An error occured validating your code. Please try again");
+          this.setState({ mode: "EnterCode" });
+        }
+      }
     });
+
   }
   private renderEnterPhone() {
     const isValidNum = !!this.state.phoneNumber && this.state.phoneNumber.length === PHONE_LEN;
@@ -89,7 +112,7 @@ export class Login extends Component<LoginProps, LoginState> {
 
 
           {mode === "RequestingCode" ? <Spinner color={Colors.Primary} /> : (
-            <Button full disabled={!isValidNum} style={{ margin: Margin["3"] }} onPress={() => this.tryLogIn()}>
+            <Button full disabled={!isValidNum} style={{ margin: Margin["3"] }} onPress={() => this.trySendCode()}>
               <Text>{"Go"}</Text>
             </Button>
           )}
@@ -119,9 +142,15 @@ export class Login extends Component<LoginProps, LoginState> {
               <Spinner color={Colors.Primary} />
             </View>
           ) : (
-              <Button full disabled={!isValidNum} style={{ margin: Margin["3"] }} onPress={() => this.tryValidateCode()}>
-                <Text>{"Go"}</Text>
-              </Button>
+              <View>
+                <Button full disabled={!isValidNum} style={{ margin: Margin["3"] }} onPress={() => this.tryValidateCode()}>
+                  <Text>{"Go"}</Text>
+                </Button>
+
+                <Button full style={{ margin: Margin["3"] }} onPress={() => this.trySendCode()}>
+                  <Text>{"Request another code"}</Text>
+                </Button>
+              </View>
             )}
         </Form>
       </View>

@@ -8,11 +8,11 @@ import MyDiary from "./screens/MyDiary";
 
 const Routes: NavigationRouteConfigMap = {
   // tslint:disable:object-literal-sort-keys
+  Login: { screen: Login },
   Home: { screen: HomeScreen },
 
 
   Main: { screen: MainScreen },
-  Login: { screen: Login },
   AddEditEntry: { screen: AddEditEntry },
   KindnessPage: { screen: KindnessPage },
   MyDiary: { screen: MyDiary }

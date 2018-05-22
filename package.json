@@ -13,14 +13,13 @@
     "ios": "exp ios",
     "lint": "tslint src/**/*.ts",
     "start": "exp start",
-    "start-joe": "exp start",
     "validate-typescript": "npm run lint && tsc --noEmit"
   },
   "dependencies": {
-    
     "expo": "26.0.0",
     "moment": "2.22.1",
     "native-base": "2.4.2",
+    "firebase": "^5.0.3",
     "react": "16.2.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-25.0.0.tar.gz",
     "react-native-calendars": "1.19.3",
