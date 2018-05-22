@@ -7,11 +7,15 @@ interface DiaryCardProps {
   diary: IDiary;
   myUid: string;
   onAdd?: () => void;
+
+  onEdit?: () => void;
 }
 
 const DiaryCard: React.SFC<DiaryCardProps> = (props) => {
 
   const i = props.diary;
+
+  const isMine = props.myUid === i.authorId;
 
   return (
     <Card style={{ flex: 0 }} key={i.id}>
@@ -33,11 +37,11 @@ const DiaryCard: React.SFC<DiaryCardProps> = (props) => {
       </CardItem>
       <CardItem>
         <Left>
-        {props.onAdd && props.myUid !== i.authorId ? (
-          <Button iconLeft small onPress={props.onAdd}>
-            <Icon type={"FontAwesome"} name="plus" />
-            <Text>Add to My Diary</Text>
-          </Button>
+          {props.onAdd && props.myUid !== i.authorId ? (
+            <Button iconLeft small onPress={props.onAdd}>
+              <Icon type={"FontAwesome"} name="plus" />
+              <Text>Add to My Diary</Text>
+            </Button>
           ) : null}
         </Left>
         <Right>
@@ -45,7 +49,18 @@ const DiaryCard: React.SFC<DiaryCardProps> = (props) => {
             <Icon type={"FontAwesome"} name="arrows-alt" />
             <Text>View</Text>
           </Button>
+          
         </Right>
+
+        {isMine && props.onEdit ? (
+            <Right>
+              <Button iconLeft small onPress={props.onEdit}>
+                <Icon type={"FontAwesome"} name="pencil" />
+                <Text>Edit</Text>
+              </Button>
+            </Right>
+
+          ) : null}
       </CardItem>
     </Card>
   );

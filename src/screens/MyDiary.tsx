@@ -68,7 +68,7 @@ class MyDiary extends AScreenComponent<MyDiaryProps, MyDiaryState> {
     return (
       <Container>
         <Content style={{ flex: 1, flexDirection: "column", paddingHorizontal: Margin["2"] }}>
-          {entries.map(i => <DiaryCard key={i.id} diary={i} myUid={currentUser.uid} />)}
+          {entries.map(i => <DiaryCard key={i.id} diary={i} myUid={currentUser.uid} onEdit={() => this.onEdit(i) } />)}
         </Content>
         <Footer>
           <Button onPress={() => this.onAddNewEntry()} iconLeft style={{ marginTop: 5 }}>
@@ -78,6 +78,15 @@ class MyDiary extends AScreenComponent<MyDiaryProps, MyDiaryState> {
         </Footer>
       </Container>
     );
+  }
+
+  private onEdit(d: IDiary) {
+    this.props.navigation.push("AddEditEntry",  {
+      diaryId: d.id,
+      onFinished: () => {
+        this.RefreshEntries();
+      }
+    });
   }
 
   private onAddNewEntry() {
