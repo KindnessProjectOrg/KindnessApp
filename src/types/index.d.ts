@@ -13,6 +13,7 @@ interface IDiary {
   body?: string;
   isGoalOfTheDay: boolean;
   id: string;
+  authorId: string;
 }
 
 interface RNCalendar {
@@ -38,20 +39,20 @@ interface RNCalendar {
 
 interface IFirebaseUser {
   apiKey:          string;
-    appName:         string;
-    authDomain:      string;
-    createdAt:       string;
-    displayName:     null;
-    email:           null;
-    emailVerified:   boolean;
-    isAnonymous:     boolean;
-    lastLoginAt:     string;
-    phoneNumber:     string;
-    photoURL:        null;
-    providerData:    FireBaseProviderDatum[];
-    redirectEventId: null;
-    stsTokenManager: FireBaseStsTokenManager;
-    uid:             string;
+  appName:         string;
+  authDomain:      string;
+  createdAt:       string;
+  displayName:     null;
+  email:           null;
+  emailVerified:   boolean;
+  isAnonymous:     boolean;
+  lastLoginAt:     string;
+  phoneNumber:     string;
+  photoURL:        null;
+  providerData:    FireBaseProviderDatum[];
+  redirectEventId: null;
+  stsTokenManager: FireBaseStsTokenManager;
+  uid:             string;
 }
 
 interface FireBaseProviderDatum {

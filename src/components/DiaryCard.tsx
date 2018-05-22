@@ -1,10 +1,11 @@
 import React from "react";
 import DateTextBlock from './Date';
-import { Body, Button, Card, CardItem, Icon, Left, Text } from 'native-base';
+import { Body, Button, Card, CardItem, Icon, Left, Text, Right } from 'native-base';
 import { KindnessEntry, GoalOfDay } from '../constants/Icons';
 
 interface DiaryCardProps {
   diary: IDiary;
+  myUid: string;
   onAdd?: () => void;
 }
 
@@ -30,22 +31,24 @@ const DiaryCard: React.SFC<DiaryCardProps> = (props) => {
           </Text>
         </Body>
       </CardItem>
-      {props.onAdd ? (<CardItem>
+      <CardItem>
         <Left>
+        {props.onAdd && props.myUid !== i.authorId ? (
           <Button iconLeft small onPress={props.onAdd}>
             <Icon type={"FontAwesome"} name="plus" />
             <Text>Add to My Diary</Text>
           </Button>
+          ) : null}
         </Left>
-      </CardItem>) : null}
+        <Right>
+          <Button iconLeft small onPress={() => alert("ToDo -> FullScreen Modal")}>
+            <Icon type={"FontAwesome"} name="full-screen" />
+            <Text>View</Text>
+          </Button>
+        </Right>
+      </CardItem>
     </Card>
   );
-}
-
-DiaryCard.defaultProps = {
-
-  //-- Define any default props you have here
-
 }
 
 export default DiaryCard;

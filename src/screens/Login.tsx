@@ -4,6 +4,7 @@ import { Margin, Colors } from "../Theme";
 import { Button, Text, Icon, Form, Item, Input, Spinner, View, H2 } from 'native-base';
 import { NavigationScreenProps, NavigationStackScreenOptions } from 'react-navigation'
 import { SendCode, VerifyCode } from '../lib/Api';
+import { GetUser } from '../lib/LocalStore';
 
 interface LoginProps extends NavigationScreenProps {
 
@@ -32,6 +33,12 @@ export class Login extends Component<LoginProps, LoginState> {
       mode: "Welcome",
       phoneNumber: "6313208176"
     };
+
+    GetUser().then(u => {
+      if(u) {
+        this.GoHome();
+      }
+    })
   }
 
   render() {
@@ -47,7 +54,6 @@ export class Login extends Component<LoginProps, LoginState> {
         return (
           <View style={{ flex: 1, flexDirection: "column", justifyContent: "center" }}>
             <H2 style={{ alignSelf: "center" }}>{"Validing code . . ."}</H2>
-            <H2 ref={"TESTER12"}></H2>
             <Spinner color={Colors.Primary} />
           </View>
         )
@@ -88,7 +94,7 @@ export class Login extends Component<LoginProps, LoginState> {
         const user = await VerifyCode(this.state.phoneNumber, this.state.code);
 
         if (user) {
-          this.props.navigation.push("Home");
+          this.GoHome();
         }
         else {
           alert("An error occured validating your code. Please try again");
@@ -98,6 +104,10 @@ export class Login extends Component<LoginProps, LoginState> {
     });
 
   }
+  private GoHome() {
+    this.props.navigation.push("Home");
+  }
+
   private renderEnterPhone() {
     const isValidNum = !!this.state.phoneNumber && this.state.phoneNumber.length === PHONE_LEN;
     const mode = this.state.mode;

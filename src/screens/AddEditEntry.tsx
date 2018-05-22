@@ -1,10 +1,12 @@
 import React from "react";
 import moment from "moment";
-import { AsyncStorage, Modal, Alert } from "react-native";
-import { Calendar, CalendarList } from "react-native-calendars";
-import { Button, Text, Icon, Form, Item, Input, Spinner, View, H2, H3, CheckBox, Content, ListItem, Body, Container, Textarea, Header, Title } from 'native-base';
+import { Modal, Alert } from "react-native";
+import { CalendarList } from "react-native-calendars";
+import { Button, Text, Icon, Item, Input, Spinner, View, H2, CheckBox, Content, ListItem, Body, Container, Textarea, } from 'native-base';
 import { NavigationScreenProps, NavigationScreenConfigProps } from 'react-navigation';
 import { Colors, Margin } from '../Theme';
+import { StoreDiary, GetDiary } from '../lib/LocalStore';
+import AScreenComponent from './AScreenComponent';
 
 interface AddEditEntryRouteProps {
   diaryId?: string;
@@ -17,9 +19,10 @@ interface AddEditEntryState {
   isLoading: boolean;
   diary?: IDiary;
   isCalendarVisible?: boolean;
+  currentUser?: IFirebaseUser;
 }
-//-- More Lifecyle Info: https://facebook.github.io/react/docs/react-component.html
-class AddEditEntry extends React.Component<AddEditEntryProps, AddEditEntryState> {
+
+class AddEditEntry extends AScreenComponent<AddEditEntryProps, AddEditEntryState> {
 
   static navigationOptions = ({ navigation }: NavigationScreenConfigProps) => {
     const { state } = navigation;
@@ -27,26 +30,8 @@ class AddEditEntry extends React.Component<AddEditEntryProps, AddEditEntryState>
     return { title: title || "" };
   }
 
-  static defaultProps: Partial<AddEditEntryProps> = {
-    //-- If you don't need default props, this static property can be deleted
-  }
-
-  /**
-   *
-   */
-  constructor(props: AddEditEntryProps) {
-    super(props);
-
-    this.state = {
-      isLoading: true,
-    }
-    this.getDiaryFromProps();
-  }
-
-
-
-  diaryKey(id: string) {
-    return `Diary_${id}`;
+  constructor(props: AddEditEntryProps, ctx) {
+    super(props, ctx);
   }
 
   private getTitle(diary: IDiary) {
@@ -58,7 +43,6 @@ class AddEditEntry extends React.Component<AddEditEntryProps, AddEditEntryState>
   }
 
   render() {
-    const props: AddEditEntryRouteProps = this.props.navigation.state.params ? this.props.navigation.state.params : {};
 
     if (this.state.isLoading) {
       return (
@@ -146,36 +130,44 @@ class AddEditEntry extends React.Component<AddEditEntryProps, AddEditEntryState>
 
 
 
-  private createDiary(d?: IDiary) {
+  private createDiary(d?: IDiary): IDiary {
     if (d) {
       return { ...d };
     }
 
     return {
       id: Guid.newGuid(),
+      authorId: "",
       date: new Date().toISOString(),
       isGoalOfTheDay: true,
     }
   }
 
-  private async getDiaryFromProps() {
+  protected initState(): AddEditEntryState {
+    return {
+      isLoading: true
+    }
+  }
+
+  protected async onGetUser(user: IFirebaseUser) {
     try {
+
       const props: AddEditEntryRouteProps = this.props.navigation.state.params ? this.props.navigation.state.params : {};
       if (props.diaryId) {
-        const local = await AsyncStorage.getItem(this.diaryKey(props.diaryId));
+        const diary = await GetDiary(props.diaryId);
 
-        if (local) {
-          const diary = JSON.parse(local);
-          this.setState({ diary, isLoading: false });
+        if (diary) {
+          this.setState({ diary, currentUser: user, isLoading: false });
           return;
         }
       }
+
     } catch {
 
     }
 
     const d = this.createDiary();
-    await AsyncStorage.setItem(this.diaryKey(d.id), JSON.stringify(d));
+    await StoreDiary(d);
 
     this.props.navigation.setParams({ title: this.getTitle(d) });
     this.setState({ diary: d, isLoading: false });
