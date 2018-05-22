@@ -4,6 +4,11 @@ interface IStore {
   diaries: IDiary[];
 }
 
+interface IAsyncRequest<T> {
+  isLoading: boolean;
+  data: T; 
+}
+
 interface IDiary {
   /**
    * In IsoString format

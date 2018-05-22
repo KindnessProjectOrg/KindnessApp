@@ -1,6 +1,7 @@
 import React from "react";
 import moment from "moment";
-import { AsyncStorage, Modal, Alert } from "react-native";
+import { AddOrUpdate, GetDiary } from "../lib/diaryManager";
+import { Modal, Alert } from "react-native";
 import { Calendar, CalendarList } from "react-native-calendars";
 import { Button, Text, Icon, Form, Item, Input, Spinner, View, H2, H3, CheckBox, Content, ListItem, Body, Container, Textarea, Header, Title } from 'native-base';
 import { NavigationScreenProps, NavigationScreenConfigProps } from 'react-navigation';
@@ -15,7 +16,7 @@ interface AddEditEntryProps extends NavigationScreenProps {
 }
 interface AddEditEntryState {
   isLoading: boolean;
-  diary?: IDiary;
+  diary: IDiary;
   isCalendarVisible?: boolean;
 }
 //-- More Lifecyle Info: https://facebook.github.io/react/docs/react-component.html
@@ -39,15 +40,16 @@ class AddEditEntry extends React.Component<AddEditEntryProps, AddEditEntryState>
 
     this.state = {
       isLoading: true,
+      diary: this.createDiary()
     }
     this.getDiaryFromProps();
   }
 
-
-
   diaryKey(id: string) {
     return `Diary_${id}`;
   }
+
+  
 
   private getTitle(diary: IDiary) {
     const m = diary && diary.date ? moment(diary.date, moment.ISO_8601) : moment(new Date());
@@ -58,7 +60,6 @@ class AddEditEntry extends React.Component<AddEditEntryProps, AddEditEntryState>
   }
 
   render() {
-    const props: AddEditEntryRouteProps = this.props.navigation.state.params ? this.props.navigation.state.params : {};
 
     if (this.state.isLoading) {
       return (
@@ -116,7 +117,7 @@ class AddEditEntry extends React.Component<AddEditEntryProps, AddEditEntryState>
 
           {!diary.isGoalOfTheDay ? (
             <Item regular>
-              <Input placeholder={"Other"} value={diary.title} />
+              <Input placeholder={"Other"} onChangeText={t => this.modifyDiary(d => d.title = t)} value={diary.title} />
             </Item>
           ) : null}
 
@@ -132,7 +133,7 @@ class AddEditEntry extends React.Component<AddEditEntryProps, AddEditEntryState>
                 Alert.alert("Submit to Kindess Page?", "\nSubmitting to the kindness page makes this entry public. Although there's no guarentee it'll make it to the page, it could. \n\nAre you sure?",
                   [{ text: "Confirm", style: "default" }, { text: "Cancel", style: "cancel" }], { cancelable: false });
               }}><Text>{"Submit to Kindess Page"}</Text></Button>
-            <Button style={{ ...Margin.mr2 }}><Text>{"My Diary"}</Text></Button>
+            <Button style={{ ...Margin.mr2 }} onPress={this.AddUpdateToMyDiary}><Text>{"My Diary"}</Text></Button>
           </View>
 
 
@@ -142,6 +143,13 @@ class AddEditEntry extends React.Component<AddEditEntryProps, AddEditEntryState>
     }
 
     return <H2>{"An error occured"}</H2>;
+  }
+
+  AddUpdateToMyDiary = async () => {
+    this.setState({ isLoading: true });
+
+    await AddOrUpdate(this.state.diary);
+    this.props.navigation.goBack();
   }
 
 
@@ -162,10 +170,9 @@ class AddEditEntry extends React.Component<AddEditEntryProps, AddEditEntryState>
     try {
       const props: AddEditEntryRouteProps = this.props.navigation.state.params ? this.props.navigation.state.params : {};
       if (props.diaryId) {
-        const local = await AsyncStorage.getItem(this.diaryKey(props.diaryId));
+        const diary = await GetDiary(props.diaryId);
 
-        if (local) {
-          const diary = JSON.parse(local);
+        if (diary) {
           this.setState({ diary, isLoading: false });
           return;
         }
@@ -175,7 +182,7 @@ class AddEditEntry extends React.Component<AddEditEntryProps, AddEditEntryState>
     }
 
     const d = this.createDiary();
-    await AsyncStorage.setItem(this.diaryKey(d.id), JSON.stringify(d));
+    await AddOrUpdate(d);
 
     this.props.navigation.setParams({ title: this.getTitle(d) });
     this.setState({ diary: d, isLoading: false });
