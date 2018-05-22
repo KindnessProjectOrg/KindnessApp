@@ -19,14 +19,13 @@ export async function SendCode(phoneNumber: string) {
 
       //TODO: Send code from firebase not locally once billing is setup.
       const to = `+${phoneNumber.startsWith("1") ? phoneNumber : "1" + phoneNumber}`;
-      const from = "+12083149836";
       const body = `Your code is ${code}`;
       const reqUrl = `https://api.twilio.com/2010-04-01/Accounts/${TwilioSettings.sid}/Messages.json`;
       console.log(`Url: ${reqUrl}`);
 
       const reqBody = new FormData();
       reqBody.append("To", to);
-      reqBody.append("From", from);
+      reqBody.append("From", TwilioSettings.fromPhoneNumber);
       reqBody.append("Body", body);
 
       try {
