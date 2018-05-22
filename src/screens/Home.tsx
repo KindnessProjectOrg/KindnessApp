@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Text, Icon, Form, Item, Input, Spinner, View, H2 } from 'native-base';
+import { Button, Text, Icon, Form, Item, Input, Spinner, View, H2, Container, Content, Footer, FooterTab } from 'native-base';
 import { NavigationScreenProps } from 'react-navigation';
 import { Image } from 'react-native';
 import { Colors, Margin } from '../Theme';
@@ -25,8 +25,8 @@ class HomeScreen extends React.Component<HomeScreenProps, HomeScreenState> {
     };
 
     GetUser().then(u => {
-      if(u) {
-        this.setState({currentUser: u});
+      if (u) {
+        this.setState({ currentUser: u });
       }
     })
   }
@@ -34,30 +34,37 @@ class HomeScreen extends React.Component<HomeScreenProps, HomeScreenState> {
   render() {
     const goal = (new Date().getMilliseconds() % 2 === 1) || true;
     return (
-      <View style={{ flex: 1, flexDirection: "column", justifyContent: "space-between" }}>
-        <View style={{ flex: 1 }}>
-          <View style={{ borderColor: Colors.Primary, borderWidth: BORDER_WIDTH, flex: 1, justifyContent: "center", maxHeight: 125, margin: Margin["4"] }}>
-            <H2 style={{ textAlign: "center" }}>{"Welcome to the Kindness Project!"}</H2>
-          </View>
-
-          {!goal ? null : (
-            <View style={{ borderColor: Colors.Primary, borderWidth: BORDER_WIDTH, justifyContent: "space-between", paddingTop: 8, paddingBottom: 8, margin: Margin["3"] }}>
-              <Text style={{ ...Margin.ml3, ...Margin.mt3 }}>{"Goal:"}</Text>
-              <Text style={{ padding: Margin["3"] }}>{SAMPLE_GOAL_TEXT}</Text>
-              <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                <Button primary><Text>{"I'll tackle this later!"}</Text></Button>
-                <Button primary><Text>{"Choose Kind"}</Text></Button>
+      <Container>
+        <Content>
+          <View style={{ flex: 1, flexDirection: "column", justifyContent: "space-between" }}>
+            <View style={{ flex: 1 }}>
+              <View style={{ borderColor: Colors.Primary, borderWidth: BORDER_WIDTH, flex: 1, justifyContent: "center", maxHeight: 125, margin: Margin["4"] }}>
+                <H2 style={{ textAlign: "center" }}>{"Welcome to the Kindness Project!"}</H2>
               </View>
+
+              {!goal ? null : (
+                <View style={{ borderColor: Colors.Primary, borderWidth: BORDER_WIDTH, justifyContent: "space-between", paddingTop: 8, paddingBottom: 8, margin: Margin["3"] }}>
+                  <Text style={{ ...Margin.ml3, ...Margin.mt3 }}>{"Goal:"}</Text>
+                  <Text style={{ padding: Margin["3"] }}>{SAMPLE_GOAL_TEXT}</Text>
+                  <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+                    <Button primary disabled><Text>{"I'll tackle this later!"}</Text></Button>
+                    <Button primary disabled><Text>{"Choose Kind"}</Text></Button>
+                  </View>
+                </View>
+              )}
             </View>
-          )}
-        </View>
-        <View style={{ height: 100, flexDirection: "row", justifyContent: "space-around", margin: Margin["2"] }}>
-          <Button style={{ padding: 13, height: 80 }} primary onPress={() => this.props.navigation.push("KindnessPage")}>
-            <Text style={{ textAlign: "center" }}>{"THE\nKINDNESS\nPAGE"}</Text></Button>
-          <Button style={{ padding: 13, height: 80 }} primary onPress={() => this.props.navigation.push("MyDiary")}>
-            <Text style={{ textAlign: "center" }}>{"MY\nKINDNESS\nDIARY"}</Text></Button>
-        </View>
-      </View>
+          </View>
+        </Content>
+        <Footer>
+          <FooterTab>
+            <Button onPress={() => this.props.navigation.push("KindnessPage")}>
+              <Text style={{ textAlign: "center" }}>{"THE\nKINDNESS\nPAGE"}</Text></Button>
+            <Button onPress={() => this.props.navigation.push("MyDiary")}>
+              <Text style={{ textAlign: "center" }}>{"MY\nKINDNESS\nDIARY"}</Text></Button>
+          </FooterTab>
+        </Footer>
+      </Container>
+
     );
   }
 }

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Component } from 'react'
+import { NavigationStackAction, NavigationActions } from "react-navigation";
 import { Margin, Colors } from "../Theme";
 import { Button, Text, Icon, Form, Item, Input, Spinner, View, H2 } from 'native-base';
 import { NavigationScreenProps, NavigationStackScreenOptions } from 'react-navigation'
@@ -35,7 +36,7 @@ export class Login extends Component<LoginProps, LoginState> {
     };
 
     GetUser().then(u => {
-      if(u) {
+      if (u) {
         this.GoHome();
       }
     })
@@ -105,7 +106,7 @@ export class Login extends Component<LoginProps, LoginState> {
 
   }
   private GoHome() {
-    this.props.navigation.push("Home");
+    this.props.navigation.dispatch({ index: 0, type: "Navigation/RESET", actions: [NavigationActions.navigate({ routeName: "Home" })] });
   }
 
   private renderEnterPhone() {

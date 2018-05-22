@@ -1,9 +1,10 @@
-import * as React from "react";
-import { Button, Text, Spinner, H2, Container, Content } from 'native-base';
-import { NavigationScreenProps } from 'react-navigation';
+import React from "react";
+import { Button, Text, Spinner, H2, Container, Content, Footer, Icon } from 'native-base';
+import { NavigationScreenProps, NavigationStackScreenOptions } from 'react-navigation';
 import { Margin } from '../Theme';
-import { GetUser } from '../lib/LocalStore';
+import { GetMyDiaries } from "../lib/diaryManager";
 import DiaryCard from '../components/DiaryCard';
+import AScreenComponent from './AScreenComponent';
 
 interface MyDiaryProps extends NavigationScreenProps {
 
@@ -15,32 +16,43 @@ interface MyDiaryState {
   isLoading: boolean;
 }
 
-class MyDiary extends React.Component<MyDiaryProps, MyDiaryState> {
+class MyDiary extends AScreenComponent<MyDiaryProps, MyDiaryState> {
 
-  constructor(props: MyDiaryProps) {
-    super(props);
+  public static navigationOptions: NavigationStackScreenOptions = {
+    title: "My Diary"
+  }
 
-    this.state = {
+  constructor(props: MyDiaryProps, ctx) {
+    super(props, ctx);
+  }
+
+  initState() {
+    return {
       entries: [],
       isLoading: true
-    };
+    }
+  }
 
-    GetUser().then(u => {
-      if(u) {
-        this.setState({currentUser: u});
-      }
-    })
+  async onGetUser(u: IFirebaseUser) {
+    this.RefreshEntries();
+  }
+
+  private RefreshEntries() {
+    this.setState({ isLoading: true }, async () => {
+      var entries = await GetMyDiaries() || [];
+      this.setState({ isLoading: false, entries });
+    });
   }
 
   render() {
-    
+
     const {
       isLoading,
       currentUser,
       entries
     } = this.state;
 
-    if(isLoading) {
+    if (isLoading) {
       return (
         <Container>
           <Spinner />
@@ -48,26 +60,32 @@ class MyDiary extends React.Component<MyDiaryProps, MyDiaryState> {
       )
     }
 
-    if(!currentUser) {
+    if (!currentUser) {
       this.props.navigation.replace("Login");
       return null;
     }
-    
+
     return (
       <Container>
-          <Content style={{ flex: 1, flexDirection: "column", paddingHorizontal: Margin["2"] }}>
-            <Button onPress={() => this.onAddNewEntry()}>
-              <Text>{"New Entry"}</Text>
-            </Button>
-            <H2 style={{ textAlign: "center" }}>{"My Diary Entries!"}</H2>
-            {entries.map(i => <DiaryCard key={i.id} diary={i} myUid={currentUser.uid} />)}
-          </Content>
+        <Content style={{ flex: 1, flexDirection: "column", paddingHorizontal: Margin["2"] }}>
+          {entries.map(i => <DiaryCard key={i.id} diary={i} myUid={currentUser.uid} />)}
+        </Content>
+        <Footer>
+          <Button onPress={() => this.onAddNewEntry()} iconLeft style={{ marginTop: 5 }}>
+            <Icon type={"FontAwesome"} name="plus" />
+            <Text>Create Entry</Text>
+          </Button>
+        </Footer>
       </Container>
     );
   }
 
   private onAddNewEntry() {
-    this.props.navigation.push("AddEditEntry");
+    this.props.navigation.push("AddEditEntry", {
+      onFinished: () => {
+        this.RefreshEntries();
+      }
+    });
   }
 }
 

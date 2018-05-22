@@ -3,3 +3,4 @@
 
 *.log
 src/AppConfig.ts
+package-lock.json

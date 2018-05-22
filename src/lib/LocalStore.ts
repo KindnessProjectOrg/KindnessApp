@@ -1,13 +1,15 @@
 import { AsyncStorage } from "react-native";
 
-
 const USER_KEY = "CURRENT_USER";
 
 export async function SetItem<T>(key: string, val: T) {
   var asStr = val ? JSON.stringify(val) : null;
+  console.log("Storing Value: ");
+  console.log(asStr);
   try {
     if (asStr) {
       await AsyncStorage.setItem(key, asStr);
+      return;
     }
     await AsyncStorage.removeItem(key);
   } catch (er) {
@@ -17,6 +19,9 @@ export async function SetItem<T>(key: string, val: T) {
 
 export async function GetItem<T>(key: string) {
   const itemStr = await AsyncStorage.getItem(key);
+
+  console.log(`Getting Item @ [${key}]`);
+  console.log(itemStr);
 
   if(itemStr) {
     return JSON.parse(itemStr) as T;
@@ -38,10 +43,6 @@ export async function GetUser() {
   }
 
   return null;
-}
-
-export function AddOrUpdateDiary(d: IDiary) {
-  return StoreDiary(d);
 }
 
 export async function GetDiary(id: string) {

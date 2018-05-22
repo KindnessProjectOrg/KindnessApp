@@ -5,7 +5,7 @@ import { CalendarList } from "react-native-calendars";
 import { Button, Text, Icon, Item, Input, Spinner, View, H2, CheckBox, Content, ListItem, Body, Container, Textarea, } from 'native-base';
 import { NavigationScreenProps, NavigationScreenConfigProps } from 'react-navigation';
 import { Colors, Margin } from '../Theme';
-import { StoreDiary, GetDiary, AddOrUpdateDiary } from '../lib/LocalStore';
+import { AddOrUpdateDiary, GetDiary } from "../lib/diaryManager";
 import AScreenComponent from './AScreenComponent';
 
 interface AddEditEntryRouteProps {
@@ -131,8 +131,14 @@ class AddEditEntry extends AScreenComponent<AddEditEntryProps, AddEditEntryState
   AddUpdateToMyDiary = async () => {
     this.setState({ isLoading: true });
 
-    if(this.state.diary) {
+    if (this.state.diary) {
+      console.log("Saving diary");
+      console.log(this.state.diary);
       await AddOrUpdateDiary(this.state.diary);
+    }
+
+    if(this.props.navigation.state.params && this.props.navigation.state.params.onFinished) {
+      this.props.navigation.state.params.onFinished();
     }
     this.props.navigation.goBack();
   }
@@ -146,7 +152,7 @@ class AddEditEntry extends AScreenComponent<AddEditEntryProps, AddEditEntryState
 
     return {
       id: Guid.newGuid(),
-      authorId: "",
+      authorId: this.state.currentUser ? this.state.currentUser.uid : "",
       date: new Date().toISOString(),
       isGoalOfTheDay: true,
     }

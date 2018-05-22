@@ -42,7 +42,7 @@ const DiaryCard: React.SFC<DiaryCardProps> = (props) => {
         </Left>
         <Right>
           <Button iconLeft small onPress={() => alert("ToDo -> FullScreen Modal")}>
-            <Icon type={"FontAwesome"} name="full-screen" />
+            <Icon type={"FontAwesome"} name="arrows-alt" />
             <Text>View</Text>
           </Button>
         </Right>
