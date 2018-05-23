@@ -9,6 +9,8 @@ interface DiaryCardProps {
   onAdd?: () => void;
 
   onEdit?: () => void;
+
+  onDelete?: () => void;
 }
 
 const DiaryCard: React.SFC<DiaryCardProps> = (props) => {
@@ -36,31 +38,39 @@ const DiaryCard: React.SFC<DiaryCardProps> = (props) => {
         </Body>
       </CardItem>
       <CardItem>
-        <Left>
+        {/* <Left>
           {props.onAdd && props.myUid !== i.authorId ? (
             <Button iconLeft small onPress={props.onAdd}>
               <Icon type={"FontAwesome"} name="plus" />
               <Text>Add to My Diary</Text>
             </Button>
           ) : null}
-        </Left>
-        <Right>
+        </Left> */}
+        {isMine && props.onDelete ? (
+          <Left>
+            <Button iconLeft small danger onPress={props.onDelete}>
+              <Icon type={"FontAwesome"} name="trash" />
+              <Text>Delete</Text>
+            </Button>
+          </Left>
+        ) : null}
+        {/* <Right>
           <Button iconLeft small onPress={() => alert("ToDo -> FullScreen Modal")}>
             <Icon type={"FontAwesome"} name="arrows-alt" />
             <Text>View</Text>
           </Button>
-          
-        </Right>
+
+        </Right> */}
 
         {isMine && props.onEdit ? (
-            <Right>
-              <Button iconLeft small onPress={props.onEdit}>
-                <Icon type={"FontAwesome"} name="pencil" />
-                <Text>Edit</Text>
-              </Button>
-            </Right>
+          <Right>
+            <Button iconLeft small onPress={props.onEdit}>
+              <Icon type={"FontAwesome"} name="pencil" />
+              <Text>Edit</Text>
+            </Button>
+          </Right>
 
-          ) : null}
+        ) : null}
       </CardItem>
     </Card>
   );

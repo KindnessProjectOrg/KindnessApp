@@ -1,8 +1,9 @@
 import React from "react";
-import { Button, Text, Spinner, H2, Container, Content, Footer, Icon } from 'native-base';
+import { Alert } from "react-native";
+import { Button, Text, Spinner, Container, Content, Footer, Icon, } from 'native-base';
 import { NavigationScreenProps, NavigationStackScreenOptions } from 'react-navigation';
 import { Margin } from '../Theme';
-import { GetMyDiaries } from "../lib/diaryManager";
+import { GetMyDiaries, DeleteDiary } from "../lib/diaryManager";
 import DiaryCard from '../components/DiaryCard';
 import AScreenComponent from './AScreenComponent';
 
@@ -68,7 +69,7 @@ class MyDiary extends AScreenComponent<MyDiaryProps, MyDiaryState> {
     return (
       <Container>
         <Content style={{ flex: 1, flexDirection: "column", paddingHorizontal: Margin["2"] }}>
-          {entries.map(i => <DiaryCard key={i.id} diary={i} myUid={currentUser.uid} onEdit={() => this.onEdit(i) } />)}
+          {entries.map(i => <DiaryCard key={i.id} diary={i} myUid={currentUser.uid} onEdit={() => this.onEdit(i)} onDelete={() => this.onDelete(i)} />)}
         </Content>
         <Footer>
           <Button onPress={() => this.onAddNewEntry()} iconLeft style={{ marginTop: 5 }}>
@@ -80,8 +81,19 @@ class MyDiary extends AScreenComponent<MyDiaryProps, MyDiaryState> {
     );
   }
 
+  private async onDelete(d: IDiary) {
+    console.log(`Diary Entry to Delete: ${d.id}`);
+    Alert.alert("Delete Entry?", "\nAre you sure you want to delete this entry??",
+      [{
+        text: "Delete", style: "destructive", onPress: async () => {
+          await DeleteDiary(d.id);
+          this.RefreshEntries();
+        }
+      }, { text: "Cancel", style: "cancel" }], { cancelable: false });
+  }
+
   private onEdit(d: IDiary) {
-    this.props.navigation.push("AddEditEntry",  {
+    this.props.navigation.push("AddEditEntry", {
       diaryId: d.id,
       onFinished: () => {
         this.RefreshEntries();

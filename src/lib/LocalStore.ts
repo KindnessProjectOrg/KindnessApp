@@ -4,8 +4,6 @@ const USER_KEY = "CURRENT_USER";
 
 export async function SetItem<T>(key: string, val: T) {
   var asStr = val ? JSON.stringify(val) : null;
-  console.log("Storing Value: ");
-  console.log(asStr);
   try {
     if (asStr) {
       await AsyncStorage.setItem(key, asStr);
@@ -20,10 +18,7 @@ export async function SetItem<T>(key: string, val: T) {
 export async function GetItem<T>(key: string) {
   const itemStr = await AsyncStorage.getItem(key);
 
-  console.log(`Getting Item @ [${key}]`);
-  console.log(itemStr);
-
-  if(itemStr) {
+  if (itemStr) {
     return JSON.parse(itemStr) as T;
   }
 
@@ -46,7 +41,7 @@ export async function GetUser() {
 }
 
 export async function GetDiary(id: string) {
-  if(id) {
+  if (id) {
     const key = diaryKey(id);
     return await GetItem<IDiary>(key);
   }
@@ -55,7 +50,7 @@ export async function GetDiary(id: string) {
 }
 
 export async function StoreDiary(d: IDiary) {
-  if(d) {
+  if (d) {
     const key = diaryKey(d.id);
     await SetItem(key, d);
   }

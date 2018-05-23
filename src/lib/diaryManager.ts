@@ -19,6 +19,23 @@ export async function GetMyDiaries() {
   return [];
 }
 
+export async function DeleteDiary(did: string) {
+  const diaries = await GetMyDiaries();
+
+  const act = diaries.find(d => d.id === did);
+
+  if(act) {
+    if(diaries.length === 1) {
+      await ClearDiaries();
+    }
+    else {
+      const idx = diaries.indexOf(act);
+      const altered = diaries.splice(idx, 1);
+      await SetItem(MY_DIARY_KEY, altered);
+    }
+  }
+}
+
 export async function AddOrUpdateDiary(entry: IDiary) {
   try {
     const currentEntries = await GetMyDiaries();
